@@ -4,11 +4,13 @@ require 'vendor/autoload.php';
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
+
 function generarPDF($htmlContent, $outputFilename = 'output.pdf') {
     // Cargar la configuración de Dompdf
     $options = new Options();
     $options->set('isHtml5ParserEnabled', true);
     $options->set('isPhpEnabled', true);
+    $options->set('chroot', "/var/www/html");
 
     // Inicializar Dompdf con las opciones
     $dompdf = new Dompdf($options);
@@ -29,7 +31,17 @@ function generarPDF($htmlContent, $outputFilename = 'output.pdf') {
     return $output;
 }
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $htmlContent = '<html><body><h1>Hello World!</h1></body></html>';
+    if(isset($_GET['tipo'])){
+        if($_GET['tipo']==="CONJAMON"){
+            $htmlContent = '<html><body><h1>Aquí tienes tu cesta!</h1>'.
+            '<img src="jamon.JPG"/>'.
+           ' </body></html>';
+
+        }else{
+            $htmlContent = '<html><body><h1>Aquí tienes tu cesta!</h1></body></html>';
+
+        }
+    }
     $pdfContent = generarPDF($htmlContent);
     header('Content-Type: application/pdf');
     echo $pdfContent;

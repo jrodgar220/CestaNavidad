@@ -7,25 +7,32 @@ require_once "Correo.php";
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if( isset($_GET ['destinatario'])){
         $nombre=$_GET ['destinatario'];
+            
         //Primer comprueba si existe en la bd
        
-            $conexion=new PDO("mysql:host=datos;dbname=usuariosdb", "root", "root");
-            $query = "SELECT * FROM usuarios WHERE nombre = :nombre";
-            $statement = $conexion->prepare($query);
-            $statement->bindParam(':data',$nombre);
-            $statement->execute();
+        $conexion=new PDO("mysql:host=datos;dbname=usuariosdb", "root", "root");
+        $query = "SELECT * FROM usuarios WHERE nombre = :nombre";
+        $statement = $conexion->prepare($query);
+        $statement->bindParam(':nombre',$nombre);
+        $statement->execute();
+        
+        $row = $statement->fetch(PDO::FETCH_ASSOC);
+        if($row){
+            $correo = new Correo();
+            $destinatario = $row ['correo'];
+            $asunto = "Regalo de navidad";
+            $cuerpo = "Esta es tu cesta de navidad";
+        
+            //hacer la llamada al contenedor cestero para crear el adjunto
+            $client = new Client();
+            $response = $client->request('GET', 'http://cestero/index.php/?tipo='.$row ['tipocesta']);
+            $adjunto= $response->getBody()->getContents();
+
+            $resultadoEnvio = $correo->enviarCorreo($destinatario, $asunto, $cuerpo, $adjunto);
             
-            $row = $statement->fetch(PDO::FETCH_ASSOC);
-            if($row){
-                $correo = new Correo();
-                $destinatario = $row ['correo'];
-                $asunto = "Regalo de navidad";
-                $cuerpo = "Esta es tu cesta de navidad";
-                $adjunto = null;
-                $resultadoEnvio = $correo->enviarCorreo($destinatario, $asunto, $cuerpo, $adjunto);
-            }
-          
-            
+            echo json_encode($resultadoEnvio);
+        }
+        
         }
     
     
