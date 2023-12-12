@@ -8,5 +8,5 @@ CREATE TABLE IF NOT EXISTS usuarios (
 );
 
 INSERT INTO usuarios (nombre,correo,tipocesta) VALUES 
-    ("Juana","jmrg250894@gmail.com","CONJAMON"),
-    ("Manolo","1bjuanarodriguez@gmail.com","SINJAMON");
+    ("Juana","jmrg250894@gmail.com","SINJAMON"),
+    ("Manolo","jve@ieslasfuentezuelas.com","CONJAMON");
